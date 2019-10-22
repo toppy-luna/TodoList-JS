@@ -1,13 +1,13 @@
-const express = require('express'); // expressモジュールを読み込む
-const multer = require('multer'); // multerモジュールを読み込む
-const uuidv4 = require('uuid/v4'); // uuidモジュールを読み込む
+import express from "express";
+import multer from "multer";
+import uuidv4 from "uuid/v4";
 
 const app = express(); // expressアプリを生成する
 app.use(multer().none()); // multerでブラウザから送信されたデータを解釈する
 app.use(express.static('web')); // webフォルダの中身を公開する
 
 // TODOリストデータ
-const todoList = [];
+const todoList: any[] = [];
 
 // http://localhost:3000/api/v1/list にアクセスしてきたときに
 // TODOリストを返す
