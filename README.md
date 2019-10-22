@@ -7,12 +7,12 @@
 
 ```
 $ node --version
-v10.16.3
+v12.13.0
 $ npm --version
 6.11.3
-$ tsc --version
-Version 3.6.3
-$ ts-node --version
+$ npx tsc --version
+Version 3.6.4
+$ npx ts-node --version
 v8.4.1
 ```
 
@@ -20,5 +20,5 @@ v8.4.1
 ```
 cd <repository root>
 npm ci
-node index.js
+npx tsnode src/index.ts
 ```
