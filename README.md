@@ -22,3 +22,10 @@ cd <repository root>
 npm ci
 npx tsnode src/index.ts
 ```
+
+## How to test
+```
+cd <repository root>
+npm install
+./node_modules/.bin/mocha --require espower-typescript/guess "test/**/*.ts"
+```
