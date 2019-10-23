@@ -1,10 +1,6 @@
-export interface ListItem {
-    id: string;
-    title: string;
-    done: boolean;
-}
+import ListItem from "./listItem.d"
 
-export class TodoListApp {
+export default class TodoListApp {
     items_: ListItem[];
 
     constructor() {
