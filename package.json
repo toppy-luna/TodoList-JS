@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/_mocha --watch-extensions ts --watch --require espower-typescript/guess test/**/*.ts"
   },
   "repository": {
     "type": "git",
