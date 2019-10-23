@@ -1,7 +1,7 @@
 import ListItem from "./listItem.d"
 
 export default class TodoListApp {
-    items_: ListItem[];
+    private items_: ListItem[];
 
     constructor() {
         this.items_ = [];
