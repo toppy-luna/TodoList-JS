@@ -1,15 +1,18 @@
 import express from "express";
 import multer from "multer";
 import uuidv4 from "uuid/v4";
+import * as todoListApp from "./todoListApp";
 
 const app = express();
 app.use(multer().none());
 app.use(express.static("web"));
 
+const api = new todoListApp.TodoListApp();
+
 const todoList: any[] = [];
 
-app.get("/api/v1/list", (req, res) => {
-    res.json(todoList);
+app.get("/api/v1/list/", (req, res) => {
+    res.json(api.getListAll());
 });
 
 app.post("/api/v1/add", (req, res) => {
