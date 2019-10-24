@@ -30,4 +30,15 @@ describe("TodoListAppのテスト", () => {
         assert(JSON.stringify([]) === JSON.stringify(items));
         assert(0 === items.length);
     })
+
+    it("searchItemのテスト", () => {
+        const todoListApp = new TodoListApp();
+        todoListApp.addItem({ body: "body1", title: "title1" }, "id1");
+        assert(JSON.stringify([{ id: "id1", title: "title1", done: false }]) === JSON.stringify(todoListApp.searchItem("title1")));
+        assert(JSON.stringify([]) === JSON.stringify(todoListApp.searchItem("invalidTitle")));
+        todoListApp.addItem({ body: "body2", title: "title2" }, "id2");
+        assert(JSON.stringify([{ id: "id1", title: "title1", done: false }]) === JSON.stringify(todoListApp.searchItem("le1")));
+        assert(JSON.stringify([{ id: "id1", title: "title1", done: false }, { id: "id2", title: "title2", done: false }]) === JSON.stringify(todoListApp.searchItem("title")));
+        assert(JSON.stringify([]) === JSON.stringify(todoListApp.searchItem("invalidId")));
+    })
 })
