@@ -16,6 +16,8 @@
     <div>
         <ul id="todo-container"></ul>
         <input id="new-todo-item-title"><button id="new-todo-item-add-button">Add</button>
+        <br>
+        <input id="search-keyword-input"><button id="search-keyword-input-button">Search</button>
     </div>
 
     <script>
@@ -74,14 +76,6 @@
             }
         }
 
-        async function fetchTodoList() {
-            return fetch('./api/v1/list')
-                .then((response) => response.json())
-                .then((todoList) => {
-                    renderTodoList(todoList);
-                })
-        }
-
         async function postNewTodoItem(todoItem) {
             const body = new FormData();
             body.append('title', todoItem.title);
@@ -103,7 +97,33 @@
             }
         });
 
+        const searchKeywordButton = document.querySelector('#search-keyword-input-button');
+
+        searchKeywordButton.addEventListener('click', (event) => {
+            fetchTodoList();
+        });
+
         fetchTodoList();
+
+        const searchKeywordInput = document.querySelector('#search-keyword-input');
+
+        async function fetchTodoList() {
+            const keyword = searchKeywordInput.value;
+            if (keyword) {
+                return fetch(`./api/v1/list/${keyword}`)
+                    .then((response) => response.json())
+                    .then((todoList) => {
+                        renderTodoList(todoList);
+                    })
+            } else {
+                return fetch('./api/v1/list')
+                    .then((response) => response.json())
+                    .then((todoList) => {
+                        renderTodoList(todoList);
+                    })
+            }
+        }
+
     </script>
 </body>
 

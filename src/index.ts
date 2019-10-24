@@ -28,7 +28,7 @@ app.put("/api/v1/item/:id", (req, res) => {
 });
 
 app.get("/api/v1/list/:keyword", (req, res) => {
-    res.json(api.searchItem(req.body.keyword));
+    res.json(api.searchItem(req.params.keyword));
 });
 
 app.listen(3000, () => console.log("Listening on port 3000"));
