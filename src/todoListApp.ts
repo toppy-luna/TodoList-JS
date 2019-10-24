@@ -38,4 +38,10 @@ export default class TodoListApp {
             console.log("Set: " + JSON.stringify(item));
         }
     }
+
+    searchItem(keyword: string): ListItem[] {
+        const findItems = this.items_.filter((item) => item.title.match(new RegExp(keyword)) != null)
+        console.log("Search[" + keyword + "]:" + JSON.stringify(findItems));
+        return findItems;
+    }
 }
