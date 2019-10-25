@@ -1,4 +1,4 @@
-import Api from '../sandbox/Api';
+import Api from '../sandbox/api';
 
 const assert = require("assert");
 
