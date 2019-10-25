@@ -4,6 +4,10 @@ import ListItem from '../src/listItem.d'
 const assert = require("assert");
 
 describe("TodoListAppのテスト", () => {
+    it("失敗するテスト", () => {
+        assert(false);
+    });
+
     it("getListAllのテスト", () => {
         const todoListApp = new TodoListApp();
         assert(JSON.stringify([]) === JSON.stringify(todoListApp.getListAll()));
