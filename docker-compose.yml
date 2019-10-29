@@ -1,0 +1,30 @@
+version: "3"
+services: 
+  nodeapp:
+    container_name: nodeapp
+    build:
+      context: . 
+      dockerfile: Dockerfile_node
+    tty: true
+    volumes:
+      - .:/workspace/
+    ports:
+      - "8080:8000"
+      - "3000:3000"
+    links:
+      - postgresql
+
+  postgresql:
+    container_name: postgresql
+    image: postgres:11.5
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: my-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql.volume:/var/lib/postgresql/data
+volumes: 
+  postgresql.volume:
+    driver: local

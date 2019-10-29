@@ -30,6 +30,7 @@ function renderTodoList(todoList) {
     todoContainer.innerHTML = '';
 
     for (const item of todoList) {
+        console.log("item title:" + item.title);
         const li = document.createElement('li');
         const label = document.createElement('label');
         const checkbox = document.createElement('input');
@@ -96,6 +97,7 @@ async function fetchTodoList() {
         return fetch('./api/v1/list')
             .then((response) => response.json())
             .then((todoList) => {
+                console.log("response size:" + todoList.length);
                 renderTodoList(todoList);
             })
     }
