@@ -10,46 +10,49 @@ export default class todoListDB {
         this.initDB();
     }
 
-    initDB() {
-        this.sequelize_ = new Sequelize('my-db', 'dev', 'secret', {
-            host: 'localhost',
-            dialect: 'postgres',
+    initDB(): Promise<any> {
+        return new Promise(() => {
+            this.sequelize_ = new Sequelize('my-db', 'dev', 'secret', {
+                host: 'localhost',
+                dialect: 'postgres',
 
-            pool: {
-                max: 5,
-                min: 0,
-                idle: 10000
-            }
-        });
-        this.sequelize_.authenticate()
-            .then(() => (err: any) => {
-                console.log('Connection has been established successfully.');
+                pool: {
+                    max: 5,
+                    min: 0,
+                    idle: 10000
+                }
+            }).then(() => {
+                this.sequelize_.authenticate()
+                    .then(() => (err: any) => {
+                        console.log('Connection has been established successfully.');
+                    })
+                    .catch(() => (err: any) => {
+                        console.log('Unable to connect to the database:', err);
+                    })
+            }).then(() => {
+                this.listTable_ = this.sequelize_.define('listTable', {
+                    uuid: {
+                        type: Sequelize.STRING
+                    },
+                    title: {
+                        type: Sequelize.STRING
+                    },
+                    done: {
+                        type: Sequelize.BOOLEAN
+                    },
+                }, {
+                    freezeTableName: true,
+                    timestamps: false
+                })
+            }).then(() => {
+                this.sequelize_
+                    .sync({ force: false }).then(() => {
+                        console.log("sync success.");
+                    }).catch((err: any) => {
+                        console.log("sync:" + err);
+                    })
             })
-            .catch(() => (err: any) => {
-                console.log('Unable to connect to the database:', err);
-            });
-
-        this.listTable_ = this.sequelize_.define('listTable', {
-            uuid: {
-                type: Sequelize.STRING
-            },
-            title: {
-                type: Sequelize.STRING
-            },
-            done: {
-                type: Sequelize.BOOLEAN
-            },
-        }, {
-            freezeTableName: true,
-            timestamps: false
         });
-
-        this.sequelize_
-            .sync({ force: false }).then(() => {
-                console.log("sync success.");
-            }).catch((err: any) => {
-                console.log("sync:" + err);
-            });
     }
 
     getListAll(): Promise<ListItem[]> {
@@ -76,22 +79,22 @@ export default class todoListDB {
         });
     };
 
-    deleteItem(targetId: string) {
-        this.listTable_.destroy({
+    deleteItem(targetId: string): Promise<any> {
+        return new Promise(this.listTable_.destroy({
             where: { uuid: targetId }
         }).then(() => {
             console.log("Delete: " + targetId);
-        });
+        }));
     }
 
-    setItemDone(targetId: string, done: any) {
-        this.listTable_.update(
+    setItemDone(targetId: string, done: any): Promise<any> {
+        return new Promise(this.listTable_.update(
             { done: done },
             {
                 where: { uuid: targetId }
             }).then(() => {
                 console.log("Set: " + JSON.stringify(targetId));
-            });
+            }));
     }
 
     searchItem(keyword: string): Promise<ListItem[]> {
@@ -110,5 +113,14 @@ export default class todoListDB {
             console.log("Search[" + keyword + "]:" + JSON.stringify(listItemSearch));
             return listItemSearch;
         });
+    }
+
+    resetTable(): Promise<any> {
+        return new Promise(this.sequelize_
+            .sync({ force: true }).then(() => {
+                console.log("sync success.");
+            }).catch((err: any) => {
+                console.log("sync:" + err);
+            }));
     }
 }
