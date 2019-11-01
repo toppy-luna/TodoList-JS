@@ -1,6 +1,5 @@
 import express from "express";
 import multer from "multer";
-import uuidv4 from "uuid/v4";
 import todoListApp from "./dbApi";
 
 const app = express();
@@ -14,11 +13,11 @@ app.get("/api/v1/list/", (req, res) => {
 });
 
 app.post("/api/v1/add", (req, res) => {
-    api.addItem(req.body, uuidv4()).then((addItem) => res.json(addItem));
+    api.addItem(req.body).then((addItem) => res.json(addItem));
 });
 
 app.delete("/api/v1/item/:id", (req, res) => {
-    api.deleteItem(req.params.id);
+    api.deleteItem(parseInt(req.params.id));
     res.sendStatus(200);
 });
 
