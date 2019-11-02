@@ -1,0 +1,3 @@
+FROM node:12.13
+COPY package*.json /workspace/
+RUN cd /workspace/ && npm install --global

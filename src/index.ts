@@ -1,7 +1,6 @@
 import express from "express";
 import multer from "multer";
-import uuidv4 from "uuid/v4";
-import todoListApp from "./todoListApp";
+import todoListApp from "./dbApi";
 
 const app = express();
 app.use(multer().none());
@@ -10,15 +9,15 @@ app.use(express.static("web"));
 const api = new todoListApp();
 
 app.get("/api/v1/list/", (req, res) => {
-    res.json(api.getListAll());
+    api.getListAll().then((listItemAll) => res.json(listItemAll));
 });
 
 app.post("/api/v1/add", (req, res) => {
-    res.json(api.addItem(req.body, uuidv4()));
+    api.addItem(req.body).then((addItem) => res.json(addItem));
 });
 
 app.delete("/api/v1/item/:id", (req, res) => {
-    api.deleteItem(req.params.id);
+    api.deleteItem(parseInt(req.params.id));
     res.sendStatus(200);
 });
 
@@ -28,7 +27,7 @@ app.put("/api/v1/item/:id", (req, res) => {
 });
 
 app.get("/api/v1/list/:keyword", (req, res) => {
-    res.json(api.searchItem(req.params.keyword));
+    api.searchItem(req.params.keyword).then((searchItem) => res.json(searchItem));
 });
 
 app.listen(3000, () => console.log("Listening on port 3000"));

@@ -1,5 +1,5 @@
 import TodoListApp from '../src/todoListApp';
-import ListItem from '../src/listItem.d'
+import ListItem from '../src/listItemOld.d'
 
 const assert = require("assert");
 

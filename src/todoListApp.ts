@@ -1,4 +1,4 @@
-import ListItem from "./listItem.d"
+import ListItem from "./listItemOld.d"
 
 export default class TodoListApp {
     private items_: ListItem[];
