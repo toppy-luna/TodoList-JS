@@ -5,7 +5,17 @@ import { Sequelize, DataTypes, Op } from "sequelize";
 
 export default class todoListDB {
     constructor() {
-        const sequelize = new Sequelize('postgres://dev:secret@localhost:5432/my-db');
+        const env = process.env.NODE_ENV || 'development';
+        const config = require(__dirname + '/../config/config.json')[env];
+
+        let connectionURI: string;
+        if (config) {
+            connectionURI = config.dialect + "://" + config.username + ":" + config.password + "@" + config.host + ":5432/" + config.database;
+        } else {
+            connectionURI = "postgres://dev:secret@localhost:5432/my-db";
+        }
+
+        const sequelize = new Sequelize(connectionURI);
 
         ItemTable.init({
             id: {
@@ -27,6 +37,8 @@ export default class todoListDB {
             freezeTableName: true,
             timestamps: false
         });
+
+        ItemTable.sync({ force: false });
     }
 
     async getListAll(): Promise<ListItem[]> {
@@ -84,7 +96,7 @@ export default class todoListDB {
     };
 
     async resetTable() {
-        //        await ItemTable.sync({ force: true });
+        await ItemTable.sync({ force: true });
         console.log("drop and create `ItemTable` as reset");
     }
 }
