@@ -40,6 +40,7 @@
     "espower-typescript": "^9.0.2",
     "mocha": "^6.2.2",
     "power-assert": "^1.6.1",
-    "sequelize-cli": "^5.5.1"
+    "sequelize-cli": "^5.5.1",
+    "sequelize-mock": "^0.10.2"
   }
 }

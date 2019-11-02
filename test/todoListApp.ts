@@ -3,7 +3,7 @@ import ListItem from '../src/listItemOld.d'
 
 const assert = require("assert");
 
-describe("TodoListAppのテスト", () => {
+describe.skip("TodoListAppのテスト", () => {
     it("getListAllのテスト", () => {
         const todoListApp = new TodoListApp();
         assert(JSON.stringify([]) === JSON.stringify(todoListApp.getListAll()));

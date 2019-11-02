@@ -1,38 +1,27 @@
 import ListItem from "./listItem.d"
-import ItemTable from "./itemTable"
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { DataTypes, Op } from "sequelize";
+var SequelizeMock = require('sequelize-mock');
 
 export default class todoListDB {
+    private ItemTable: any;
     constructor() {
-        const sequelize = new Sequelize('postgres://dev:secret@localhost:5432/my-db');
-        ItemTable.init({
-            id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-            },
-            title: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            done: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-            }
+        const sequelize = new SequelizeMock();
+        this.ItemTable = sequelize.define('listTable', {
+            id: DataTypes.INTEGER,
+            title: DataTypes.STRING,
+            done: DataTypes.BOOLEAN
         }, {
-            sequelize,
-            tableName: 'listTable',
             freezeTableName: true,
             timestamps: false
         });
     }
 
     async getListAll(): Promise<ListItem[]> {
-        const findItems = await ItemTable.findAll();
+        const findItems = await this.ItemTable.findAll();
         let listItemAll: ListItem[] = [];
         for (var findItem of findItems) {
-            const item: ListItem = { id: findItem.getDataValue("id"), title: findItem.getDataValue("title"), done: findItem.getDataValue("done") };
+            const item: ListItem = { id: findItem.dataValues.id, title: findItem.dataValues.title, done: findItem.dataValues.done };
             listItemAll.push(item);
         }
         console.log("GET: " + JSON.stringify(listItemAll));
@@ -40,24 +29,24 @@ export default class todoListDB {
     };
 
     async addItem(title: string): Promise<ListItem> {
-        const createItem = await ItemTable.create({
+        const createItem = await this.ItemTable.create({
             title: title,
             done: false,
         });
-        const item: ListItem = { id: createItem.getDataValue("id"), title: createItem.getDataValue("title"), done: createItem.getDataValue("done") };
+        const item: ListItem = { id: createItem.dataValues.id, title: createItem.dataValues.title, done: createItem.dataValues.done };
         console.log("Add: " + JSON.stringify(item));
         return item;
     };
 
     async deleteItem(targetId: number) {
-        await ItemTable.destroy({
+        await this.ItemTable.destroy({
             where: { id: targetId }
         });
         console.log("Delete: " + targetId);
     }
 
     async setItemDone(targetId: string, done: any): Promise<any> {
-        await ItemTable.update(
+        await this.ItemTable.update(
             { done: done },
             {
                 where: { uuid: targetId }
@@ -66,7 +55,7 @@ export default class todoListDB {
     }
 
     async searchItem(keyword: string): Promise<ListItem[]> {
-        const findItems = await ItemTable.findAll({
+        const findItems = await this.ItemTable.findAll({
             where: {
                 title: {
                     [Op.like]: "%" + keyword + "%"
@@ -75,7 +64,7 @@ export default class todoListDB {
         });
         let listItemSearch: ListItem[] = [];
         for (var findItem of findItems) {
-            const item: ListItem = { id: findItem.getDataValue("id"), title: findItem.getDataValue("title"), done: findItem.getDataValue("done") };
+            const item: ListItem = { id: findItem.dataValues.id, title: findItem.dataValues.title, done: findItem.dataValues.done };
             listItemSearch.push(item);
         }
         console.log("Search[" + keyword + "]:" + JSON.stringify(listItemSearch));
@@ -83,7 +72,7 @@ export default class todoListDB {
     };
 
     async resetTable() {
-        //        await ItemTable.sync({ force: true });
+        await this.ItemTable.sync({ force: true });
         console.log("drop and create `ItemTable` as reset");
     }
 }
