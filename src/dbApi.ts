@@ -6,6 +6,7 @@ import { Sequelize, DataTypes, Op } from "sequelize";
 export default class todoListDB {
     constructor() {
         const sequelize = new Sequelize('postgres://dev:secret@localhost:5432/my-db');
+
         ItemTable.init({
             id: {
                 type: DataTypes.INTEGER,
