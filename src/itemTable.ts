@@ -1,7 +1,9 @@
-import { Model } from "sequelize";
+import mongoose = require("mongoose");
 
-export default class ItemTable extends Model {
-    id!: number;
-    title!: string;
-    done!: boolean;
-}
+const schema = new mongoose.Schema({
+    id: String,
+    title: String,
+    done: Boolean
+});
+const ItemTable = mongoose.model("item", schema);
+export default ItemTable;

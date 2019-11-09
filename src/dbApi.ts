@@ -1,94 +1,57 @@
 import ListItem from "./listItem.d"
 import ItemTable from "./itemTable"
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+import mongoose = require("mongoose");
 
 export default class todoListDB {
     constructor() {
         const env = process.env.NODE_ENV || 'development';
-        const config = require(__dirname + '/../config/config.json')[env];
-
-        let connectionURI: string;
-        if (config) {
-            connectionURI = config.dialect + "://" + config.username + ":" + config.password + "@" + config.host + ":5432/" + config.database;
-        } else {
-            connectionURI = "postgres://dev:secret@localhost:5432/my-db";
-        }
-
-        const sequelize = new Sequelize(connectionURI);
-
-        ItemTable.init({
-            id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
-                primaryKey: true,
-            },
-            title: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            done: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-            }
-        }, {
-            sequelize,
-            tableName: 'listTable',
-            freezeTableName: true,
-            timestamps: false
-        });
-
-        ItemTable.sync({ force: false });
+        const connectionURI: string = "mongodb://localhost:27017/" + env + "-db";
+        mongoose.set('useFindAndModify', false);
+        mongoose.connect(connectionURI, { useUnifiedTopology: true, useNewUrlParser: true });
+        mongoose
+            .connection
+            .on("error", () => {
+                console.log("MongoDB connection error. Please make sure MongoDB is running.");
+                process.exit();
+            });
     }
 
     async getListAll(): Promise<ListItem[]> {
-        const findItems = await ItemTable.findAll();
-        let listItemAll: ListItem[] = [];
+        const findItems = await ItemTable.find({}).exec().then((result: any) => { console.log("find:" + JSON.stringify(result)); return result; });
+        let listItemSearch: ListItem[] = [];
         for (var findItem of findItems) {
-            const item: ListItem = { id: findItem.getDataValue("id"), title: findItem.getDataValue("title"), done: findItem.getDataValue("done") };
-            listItemAll.push(item);
+            const item: ListItem = { id: findItem._id, title: findItem.title, done: findItem.done };
+            listItemSearch.push(item);
         }
-        console.log("GET: " + JSON.stringify(listItemAll));
-        return listItemAll;
+        console.log("GET: " + JSON.stringify(listItemSearch));
+        return listItemSearch;
     };
 
     async addItem(title: string): Promise<ListItem> {
-        const createItem = await ItemTable.create({
-            title: title,
-            done: false,
-        });
-        const item: ListItem = { id: createItem.getDataValue("id"), title: createItem.getDataValue("title"), done: createItem.getDataValue("done") };
+        const addItem = new ItemTable({ title: title, done: false });
+        const save = await addItem.save().then((result: any) => { console.log("save:" + JSON.stringify(result)); return result; });
+        const item: ListItem = { id: save._id, title: save.title, done: save.done };
         console.log("Add: " + JSON.stringify(item));
         return item;
     };
 
-    async deleteItem(targetId: number) {
-        await ItemTable.destroy({
-            where: { id: targetId }
-        });
+    async deleteItem(targetId: string) {
+        await ItemTable.findOneAndRemove({ _id: targetId }).exec().then((result: any) => { console.log("removeone:" + JSON.stringify(result)); return result; });;
         console.log("Delete: " + targetId);
     }
 
     async setItemDone(targetId: string, done: any): Promise<any> {
-        await ItemTable.update(
-            { done: done },
-            {
-                where: { uuid: targetId }
-            });
+        const update_item = { done: done };
+        await ItemTable.findOneAndUpdate({ _id: targetId }, { $set: update_item }, { new: true }).exec().then((result: any) => { console.log("update:" + JSON.stringify(result)); return result; });;
         console.log("Set: " + JSON.stringify(targetId));
     }
 
     async searchItem(keyword: string): Promise<ListItem[]> {
-        const findItems = await ItemTable.findAll({
-            where: {
-                title: {
-                    [Op.like]: "%" + keyword + "%"
-                }
-            }
-        });
+        const findItems = await ItemTable.find({ title: RegExp(keyword, "i") }).exec().then((result: any) => { console.log("findone:" + JSON.stringify(result)); return result; });;
         let listItemSearch: ListItem[] = [];
         for (var findItem of findItems) {
-            const item: ListItem = { id: findItem.getDataValue("id"), title: findItem.getDataValue("title"), done: findItem.getDataValue("done") };
+            const item: ListItem = { id: findItem._id, title: findItem.title, done: findItem.done };
             listItemSearch.push(item);
         }
         console.log("Search[" + keyword + "]:" + JSON.stringify(listItemSearch));
@@ -96,7 +59,6 @@ export default class todoListDB {
     };
 
     async resetTable() {
-        await ItemTable.sync({ force: true });
-        console.log("drop and create `ItemTable` as reset");
+        await ItemTable.deleteMany({}).exec().then((result: any) => { console.log("removeall:" + JSON.stringify(result)); });
     }
 }
