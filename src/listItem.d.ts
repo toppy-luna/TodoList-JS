@@ -1,5 +1,5 @@
 export default class ListItem {
-    id: number;
+    id: string;
     title: string;
     done: boolean;
 }

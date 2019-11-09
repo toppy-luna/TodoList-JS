@@ -16,6 +16,9 @@ export default class todoListDB {
                 process.exit();
             });
     }
+    async closedb() {
+        await mongoose.disconnect();
+    }
 
     async getListAll(): Promise<ListItem[]> {
         const findItems = await ItemTable.find({}).exec().then((result: any) => { console.log("find:" + JSON.stringify(result)); return result; });
