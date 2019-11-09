@@ -16,12 +16,13 @@ export default class todoListDB {
                 process.exit();
             });
     }
+
     async closedb() {
         await mongoose.disconnect();
     }
 
     async getListAll(): Promise<ListItem[]> {
-        const findItems = await ItemTable.find({}).exec().then((result: any) => { console.log("find:" + JSON.stringify(result)); return result; });
+        const findItems = await ItemTable.find({}).exec().then((result: any) => { return result; });
         let listItemSearch: ListItem[] = [];
         for (var findItem of findItems) {
             const item: ListItem = { id: findItem._id, title: findItem.title, done: findItem.done };
@@ -33,25 +34,25 @@ export default class todoListDB {
 
     async addItem(title: string): Promise<ListItem> {
         const addItem = new ItemTable({ title: title, done: false });
-        const save = await addItem.save().then((result: any) => { console.log("save:" + JSON.stringify(result)); return result; });
+        const save = await addItem.save().then((result: any) => { return result; });
         const item: ListItem = { id: save._id, title: save.title, done: save.done };
         console.log("Add: " + JSON.stringify(item));
         return item;
     };
 
     async deleteItem(targetId: string) {
-        await ItemTable.findOneAndRemove({ _id: targetId }).exec().then((result: any) => { console.log("removeone:" + JSON.stringify(result)); return result; });;
+        await ItemTable.findOneAndRemove({ _id: targetId }).exec().then((result: any) => { return result; });;
         console.log("Delete: " + targetId);
     }
 
     async setItemDone(targetId: string, done: any): Promise<any> {
         const update_item = { done: done };
-        await ItemTable.findOneAndUpdate({ _id: targetId }, { $set: update_item }, { new: true }).exec().then((result: any) => { console.log("update:" + JSON.stringify(result)); return result; });;
+        await ItemTable.findOneAndUpdate({ _id: targetId }, { $set: update_item }, { new: true }).exec().then((result: any) => { return result; });;
         console.log("Set: " + JSON.stringify(targetId));
     }
 
     async searchItem(keyword: string): Promise<ListItem[]> {
-        const findItems = await ItemTable.find({ title: RegExp(keyword, "i") }).exec().then((result: any) => { console.log("findone:" + JSON.stringify(result)); return result; });;
+        const findItems = await ItemTable.find({ title: RegExp(keyword, "i") }).exec().then((result: any) => { return result; });;
         let listItemSearch: ListItem[] = [];
         for (var findItem of findItems) {
             const item: ListItem = { id: findItem._id, title: findItem.title, done: findItem.done };
@@ -62,6 +63,6 @@ export default class todoListDB {
     };
 
     async resetTable() {
-        await ItemTable.deleteMany({}).exec().then((result: any) => { console.log("removeall:" + JSON.stringify(result)); });
+        await ItemTable.deleteMany({}).exec();
     }
 }
