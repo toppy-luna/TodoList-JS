@@ -28,6 +28,7 @@
     "@types/typescript": "^2.0.0",
     "@types/uuid": "^3.4.5",
     "@types/validator": "^10.11.3",
+    "bluebird": "^3.7.1",
     "express": "^4.17.1",
     "mongodb": "^3.3.3",
     "mongoose": "^5.7.9",

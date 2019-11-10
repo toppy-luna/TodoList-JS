@@ -1,4 +1,5 @@
 import DBApi from '../src/dbApi';
+import { resolve, reject } from 'bluebird';
 
 const assert = require("assert");
 
@@ -16,8 +17,6 @@ describe("dbApiのテスト", () => {
         await api.closedb();
 
         console.log("func1 end");
-
-        return Promise.resolve();
     })
 
     it("addItemのテスト", async () => {
@@ -31,8 +30,6 @@ describe("dbApiのテスト", () => {
         await api.closedb();
 
         console.log("func2 end");
-
-        return Promise.resolve();
     })
 
     it("deleteItemのテスト", async () => {
@@ -49,8 +46,6 @@ describe("dbApiのテスト", () => {
         await api.closedb();
 
         console.log("func3 end");
-
-        return Promise.resolve();
     })
 
     it("searchItemのテスト", async () => {
@@ -68,8 +63,6 @@ describe("dbApiのテスト", () => {
         await api.closedb();
 
         console.log("func4 end");
-
-        return Promise.resolve();
     })
 
     it("resetTableのテスト", async () => {
@@ -87,7 +80,5 @@ describe("dbApiのテスト", () => {
         await api.closedb();
 
         console.log("func5 end");
-
-        return Promise.resolve();
     })
 })
