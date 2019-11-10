@@ -17,6 +17,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Install MongoDB
+      run: |
+        docker run --rm --publish 27017:27017 --name mongodb --detach mongo
     - name: npm install, build, and test
       run: |
         npm ci
